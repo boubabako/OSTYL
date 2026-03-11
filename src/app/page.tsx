@@ -470,6 +470,7 @@ export default function OStylPage() {
                       onClick={() => {
                         setActiveSection("top");
                         scrollToId("top");
+                        if (!canHoverNav) setNavHovered(false);
                       }}
                       className="text-base sm:text-lg font-semibold tracking-tight"
                       whileHover={{ y: -1 }}
@@ -480,7 +481,14 @@ export default function OStylPage() {
                   ) : (
                     <motion.button
                       type="button"
-                      onClick={() => scrollToId(activeSection)}
+                      onClick={(e) => {
+                        if (!canHoverNav) {
+                          e.stopPropagation();
+                          setNavHovered(true);
+                          return;
+                        }
+                        scrollToId(activeSection);
+                      }}
                       className="text-sm font-semibold tracking-tight text-neutral-100"
                       whileHover={{ y: -1 }}
                       whileTap={{ scale: 0.98 }}
@@ -509,7 +517,8 @@ export default function OStylPage() {
                       >
                         <Button
                           className="bg-transparent hover:bg-neutral-900/70 text-white px-3 sm:px-4 py-2"
-                          onClick={() => {
+                          onClick={(e) => {
+                            e.stopPropagation();
                             setActiveSection("collection");
                             scrollToId("collection");
                             if (!canHoverNav) setNavHovered(false);
@@ -519,7 +528,8 @@ export default function OStylPage() {
                         </Button>
                         <Button
                           className="bg-transparent hover:bg-neutral-900/70 text-white px-3 sm:px-4 py-2"
-                          onClick={() => {
+                          onClick={(e) => {
+                            e.stopPropagation();
                             setActiveSection("about");
                             scrollToId("about");
                             if (!canHoverNav) setNavHovered(false);
@@ -529,7 +539,8 @@ export default function OStylPage() {
                         </Button>
                         <Button
                           className="bg-transparent hover:bg-neutral-900/70 text-white px-3 sm:px-4 py-2"
-                          onClick={() => {
+                          onClick={(e) => {
+                            e.stopPropagation();
                             setActiveSection("commander");
                             scrollToId("commander");
                             if (!canHoverNav) setNavHovered(false);
