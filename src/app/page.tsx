@@ -217,6 +217,7 @@ export default function OStylPage() {
 
   const [showNav, setShowNav] = React.useState(false);
   const [navHovered, setNavHovered] = React.useState(false);
+  const [canHoverNav, setCanHoverNav] = React.useState(false);
   const [activeSection, setActiveSection] = React.useState<
     "top" | "collection" | "about" | "commander"
   >("top");
@@ -224,6 +225,19 @@ export default function OStylPage() {
   const [selectedProduct, setSelectedProduct] = React.useState<
     (typeof products)[number] | null
   >(null);
+
+  React.useEffect(() => {
+    if (typeof window === "undefined") return;
+    const mql = window.matchMedia("(hover: hover) and (pointer: fine)");
+    const onChange = () => setCanHoverNav(Boolean(mql.matches));
+    onChange();
+    mql.addEventListener?.("change", onChange);
+    return () => mql.removeEventListener?.("change", onChange);
+  }, []);
+
+  React.useEffect(() => {
+    if (!showNav) setNavHovered(false);
+  }, [showNav]);
 
   React.useEffect(() => {
     const t = window.setTimeout(() => setShowSplash(false), 900);
@@ -432,8 +446,15 @@ export default function OStylPage() {
           >
             <div className="mx-auto max-w-6xl px-4 sm:px-6 pt-4 flex justify-center">
               <motion.div
-                onHoverStart={() => setNavHovered(true)}
-                onHoverEnd={() => setNavHovered(false)}
+                onHoverStart={canHoverNav ? () => setNavHovered(true) : undefined}
+                onHoverEnd={canHoverNav ? () => setNavHovered(false) : undefined}
+                onClick={
+                  canHoverNav
+                    ? undefined
+                    : () => {
+                        setNavHovered((v) => !v);
+                      }
+                }
                 animate={{ width: navHovered ? 520 : 150 }}
                 transition={{ type: "spring", stiffness: 260, damping: 22 }}
                 className="overflow-hidden rounded-2xl border border-neutral-800 bg-neutral-950/70 backdrop-blur shadow-[0_10px_30px_rgba(0,0,0,0.35)]"
@@ -491,6 +512,7 @@ export default function OStylPage() {
                           onClick={() => {
                             setActiveSection("collection");
                             scrollToId("collection");
+                            if (!canHoverNav) setNavHovered(false);
                           }}
                         >
                           Collection
@@ -500,6 +522,7 @@ export default function OStylPage() {
                           onClick={() => {
                             setActiveSection("about");
                             scrollToId("about");
+                            if (!canHoverNav) setNavHovered(false);
                           }}
                         >
                           À propos
@@ -509,6 +532,7 @@ export default function OStylPage() {
                           onClick={() => {
                             setActiveSection("commander");
                             scrollToId("commander");
+                            if (!canHoverNav) setNavHovered(false);
                           }}
                         >
                           Commander
